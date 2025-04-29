@@ -1,0 +1,72 @@
+@import url("https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+.container {
+  margin: 0px 68px;
+}
+.header-addBtn {
+  display: flex;
+  flex-direction: column;
+  padding: 0 30px;
+}
+
+.header-menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+  max-height: 120px;
+}
+
+.header-title {
+  font-family: "Newsreader", serif;
+  font-optical-sizing: auto;
+  font-size: 64px;
+}
+
+.divider {
+  position: absolute;
+  height: 0px;
+  left: 96px;
+  right: 96px;
+  bottom: 50px;
+
+  border: 2px solid #e6e6e6;
+  /* box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25); */
+}
+
+.header-btn {
+  background-color: #ffffff;
+  border: 1px solid rgb(209, 213, 219);
+  border-radius: 20px;
+  box-sizing: border-box;
+  color: #111827;
+  font-family: "Inter var", ui-sans-serif, system-ui, -apple-system, system-ui,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  text-decoration: none #d1d5db solid;
+  text-decoration-thickness: auto;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.header-btn:hover {
+  background-color: rgb(249, 250, 251);
+}
+
+.header-btn:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.header-btn:focus-visible {
+  box-shadow: none;
+}

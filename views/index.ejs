@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Inter&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="homepage">
+      <!-- Navigation Header -->
+      <%- include('partials/header') %>
+
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="hero-card">
+          <span class="hero-title"
+            >Effortless Stock for Every Sip &amp; Slice</span
+          >
+          <span class="hero-text"
+            >Inventory management designed for the pace of small cafés and
+            bakeries</span
+          >
+        </div>
+        <img
+          src="/images/coffee-shop.png"
+          class="hero-image"
+          alt="cozy-coffee-shop-coffee-bar-black-white-handdrawn-vector-illustration"
+        />
+        <button class="view-inventory">
+          <a href="/products" class="text-white">View Inventory</a>
+        </button>
+
+        <p class="hero-pic-text">
+          Cozy Coffee Shop Coffee bar Black and white handdrawn vector
+          illustration—by Chalavek on FreePik.
+        </p>
+      </div>
+
+      <!-- What We Believe Section-->
+      <div class="believe-section">
+        <p class="believe-title">
+          <span class="text-black">WHAT WE BELIEVE</span>
+        </p>
+        <div class="believe-paragraph">
+          <p class="believe-text">
+            We believe in wheat. Tasty wheat. Wheat like:
+          </p>
+
+          <p class="believe-text">
+            Baguette. German Rye. Sourdough. Focaccia. Challah. Black Sesame
+            Rolls. Pretzels. Olive Rolls. Croissants. Ciabatta. Whole Wheat
+            Bread. Brioche. Corn Bread. Danish. Potato Bread. Éclairs.
+            Donut.Scones. Loaf Cake. Brownies. Madeleine. Canelé. Coffee Cake.
+            Strudel. Cinnamon Rolls. White Bread. Challah.
+          </p>
+
+          <p class="believe-text">What are we forgetting?</p>
+
+          <p class="believe-text">
+            Oh! Espresso. Americano. Latte. Cappuccino. Flat white. Cortado.
+            Mocha. Affogato. Matcha latte. Black sesame latte. Ube latte.
+            Pistachio cream latte. Lavender latte. Rose latte. Dirty chai. Chai
+            latte. Golden milk latte. Hojicha latte. London Fog. Thai iced tea.
+            Vietnamese iced coffee. Iced shaken espresso. Cold brew. Nitro cold
+            brew. Iced matcha. Macadamia nut latte. Oat milk latte. Almond milk
+            cappuccino. Soy vanilla latte. Brown sugar boba milk tea. Strawberry
+            matcha latte. Dalgona coffee. Taro latte. Spanish latte. Espresso
+            tonic. Butter coffee. Sakura latte. Turmeric latte. Caramel
+            macchiato. Pumpkin spice latte. Café miel. Dirty matcha. Ice-blended
+            frappes. Seasonal specials. The drink named after the barista's
+            dog...
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <%- include('partials/footer') %>
+  </body>
+</html>

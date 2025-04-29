@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Inter&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/products.css" />
+  </head>
+  <body>
+    <div class="homepage">
+      <!-- Include header partial -->
+      <%- include('partials/header') %>
+      <div class="container">
+        <div class="header-addBtn">
+          <div class="header-menu">
+            <p class="header-title"><%= title %></p>
+            <div class="buttons">
+              <button class="header-btn">Default</button>
+              <button class="header-btn">A-Z</button>
+              <button class="header-btn">Categories</button>
+            </div>
+          </div>
+          <div class="divider"></div>
+        </div>
+      </div>
+
+      <% if (products.length > 0) { %>
+      <div class="product-grid">
+        <% products.forEach(product => { %>
+        <div class="product-card" style="border-color: <%= product.color %>">
+          <img src="<%= product.src %>" alt="<%= product.name %>" />
+          <h3><%= product.name %></h3>
+          <p class="price">$<%= product.price %></p>
+          <p class="category"><%= product.category %></p>
+        </div>
+        <% }); %>
+      </div>
+      <% } else { %>
+      <p>No products found.</p>
+      <% } %>
+    </div>
+
+    <%- include('partials/footer') %>
+  </body>
+</html>
