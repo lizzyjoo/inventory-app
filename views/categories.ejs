@@ -1,9 +1,47 @@
-<h1><%= title %></h1>
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Inter&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/categories.css" />
+    <link rel="stylesheet" href="/css/products.css" />
+  </head>
+  <body>
+    <div class="homepage">
+      <!-- Include header partial -->
+      <%- include('partials/header') %>
+      <div class="container">
+        <div class="header-addBtn">
+          <div class="header-menu">
+            <p class="header-title"><%= title %></p>
+            <div class="buttons">
+              <button class="header-btn">Add a Category</button>
+            </div>
+          </div>
+          <div class="divider"></div>
+        </div>
+        <div class="category-grid">
+          <% listedCategories.forEach(category => { %>
+          <div class="category-card">
+            <img
+              src="<%= category.src %>"
+              alt="<%= category.category %>"
+              width="100px"
+              height="auto"
+            />
+            <div class="category-name-div"><%= category.category %></div>
+          </div>
+          <% }); %>
+        </div>
+      </div>
+    </div>
 
-<ul>
-  <% listedCategories.forEach(category => { %>
-  <li style="background-color: <%= category.color %>">
-    <%= category.category %>
-  </li>
-  <% }); %>
-</ul>
+    <%- include('partials/footer') %>
+  </body>
+</html>
