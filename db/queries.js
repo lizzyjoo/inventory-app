@@ -7,7 +7,7 @@ async function getAllProducts(query = null) {
       return filterProducts(query);
     }
     const { rows } = await pool.query(
-      "SELECT inventory.*, categories.category, categories.color FROM inventory JOIN categories ON category_id = categories.id;"
+      "SELECT inventory.*, categories.category, categories.src AS category_src FROM inventory JOIN categories ON category_id = categories.id;"
     );
     return rows;
   } catch (err) {
@@ -15,7 +15,6 @@ async function getAllProducts(query = null) {
     return [];
   }
 }
-
 // get all categories
 async function getCategories() {
   const { rows } = await pool.query(
@@ -36,8 +35,8 @@ async function getCategoryIdByName(categoryName) {
 
 async function addCategory(newCategory) {
   const result = await pool.query(
-    "INSERT INTO categories (category, color) VALUES ($1, $2);",
-    [newCategory.category, newCategory.color]
+    "INSERT INTO categories (category, src) VALUES ($1, $2);",
+    [newCategory.category, newCategory.src]
   );
   return result.rowCount > 0; // Returns true if insertion was successful
 }
@@ -67,6 +66,17 @@ async function deleteProduct(id) {
     "DELETE FROM inventory WHERE id = $1 AND isDefault = false",
     [id]
   );
+}
+async function filterById(id) {
+  const { rows } = await pool.query(
+    "SELECT inventory.*, categories.category, categories.src AS category_src FROM inventory JOIN categories ON inventory.category_id = categories.id WHERE inventory.id = $1",
+    [id]
+  );
+
+  const newRows = rows.map((row) => {
+    return { ...row };
+  });
+  return newRows[0];
 }
 
 // when a category is deleted, all the products in that category will be shifted to "uncategorized"
@@ -140,7 +150,7 @@ async function editProduct({
 async function search(query) {
   const searchTerm = `%${query}%`;
   const { rows } = await pool.query(
-    "SELECT inventory.*, categories.category, categories.color FROM inventory JOIN categories ON inventory.category_id = categories.id WHERE inventory.name ILIKE $1",
+    "SELECT inventory.*, categories.category, categories.src AS category_src FROM inventory JOIN categories ON inventory.category_id = categories.id WHERE inventory.name ILIKE $1",
     [searchTerm]
   );
 
@@ -156,5 +166,6 @@ module.exports = {
   deleteProduct,
   deleteCategory,
   editProduct,
+  filterById,
   search,
 };
