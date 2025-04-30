@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Inter&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/products.css" />
+  </head>
+  <body>
+    <div class="homepage">
+      <!-- Include header partial -->
+      <%- include('partials/header') %>
+      <div class="container">
+        <div class="header-addBtn">
+          <div class="header-menu">
+            <p class="header-title">Search results for '<%=query%>'</p>
+            <div class="buttons">
+              <a href="/products" class="return-btn">Return to products</a>
+            </div>
+          </div>
+          <div class="divider"></div>
+        </div>
+
+        <% if (products.length > 0) { %>
+        <div class="product-grid">
+          <% products.forEach(product => { %>
+          <div class="product-card">
+            <img
+              src="<%= product.src %>"
+              alt="<%= product.name %>"
+              width="100px"
+              height="auto"
+            />
+            <div class="product-info">
+              <p class="product-name"><%= product.name %></p>
+
+              <p class="price">$<%= product.price %></p>
+              <div class="product-count">Qty: <%= product.quantity %></div>
+            </div>
+            <span class="corner-text"><%= product.category %></span>
+          </div>
+          <% }); %>
+        </div>
+        <% } else { %>
+        <p>No results found.</p>
+        <% } %>
+      </div>
+    </div>
+
+    <%- include('partials/footer') %>
+  </body>
+</html>
