@@ -10,7 +10,12 @@
       <a href="/products" class="nav-item products">Products</a>
     </nav>
 
-    <form class="form-flex" action="/search" method="GET">
+    <form
+      class="form-flex"
+      role="search"
+      action="/products/search"
+      method="get"
+    >
       <div class="search-icon">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -29,6 +34,7 @@
         type="text"
         name="query"
         class="search-input text-rgb-60-60-67"
+        aria-label="Search products"
         placeholder="Search"
       />
     </form>
