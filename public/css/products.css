@@ -763,3 +763,7 @@ select.description-category:focus {
 .edit-submit-btn:hover:after {
   --progress: -102%;
 }
+
+.new-product-form {
+  margin-bottom: 5em;
+}

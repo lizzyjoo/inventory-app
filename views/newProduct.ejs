@@ -1,58 +1,171 @@
 <!doctype html>
-<html lang="en">
+<html>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/css/addproduct.css" />
-    <link rel="icon" type="image/x-icon" href="/frootie-logo.svg" />
-    <script src="/bootstrap.js" defer></script>
-    <title>Add Product</title>
+    <title>Add New Product</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Inter&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/products.css" />
   </head>
   <body>
-    <%- include("partials/navbar") %>
-    <div class="container">
-      <div class="main-content">
-        <div class="header-addbtn">
-          <h1>add a product</h1>
+    <div class="homepage">
+      <!-- Include header partial -->
+      <%- include('partials/header') %>
+      <div class="container">
+        <div class="header-addBtn">
+          <div class="header-menu">
+            <p class="header-title">Add New Product</p>
+            <div class="buttons">
+              <a href="/products" class="return-btn">Cancel and Return</a>
+            </div>
+          </div>
+          <div class="divider"></div>
         </div>
-        <div class="product-form-container">
-          <form
-            class="product-form"
-            action="/products/new"
-            method="post"
-            enctype="multipart/form-data"
-          >
-            <label for="name">Name:</label>
-            <input type="text" name="name" required />
-            <label for="price">Price:</label>
-            <input type="number" name="price" min="0.01" step="any" required />
-            <label for="quantity">Qty:</label>
-            <input type="number" name="quantity" min="1" max="999" required />
-            <label for="description">Description:</label>
-            <textarea name="description" maxlength="300"></textarea>
-            <label for="category">Category:</label>
-            <select name="category" id="category">
-              <% listedCategories.forEach((category) => { %>
-              <option value="<%=category.category%>">
-                <%=category.category%>
-              </option>
-              <% }) %>
-            </select>
-            <label for="image">Image:</label>
-            <input
-              type="file"
-              name="src"
-              accept="image/png, image/jpeg, image/svg+xml"
-            />
-            <input type="text" name="isDefault" hidden value="false" />
 
-            <button type="submit" class="btn btn-custom add-product-submit">
-              Submit
-            </button>
-          </form>
-        </div>
+        <form
+          action="/products/new"
+          method="post"
+          enctype="multipart/form-data"
+          class="new-product-form"
+        >
+          <div class="product-detail">
+            <!-- Image section -->
+            <div class="image-section">
+              <img
+                src="/images/default.svg"
+                alt="Product image preview"
+                loading="lazy"
+                width="300px"
+                height="auto"
+                id="preview-image"
+              />
+              <div class="upload-container">
+                <input
+                  type="file"
+                  name="src"
+                  id="src"
+                  style="display: none"
+                  onchange="previewImage(this)"
+                />
+                <button
+                  type="button"
+                  class="upload-btn"
+                  onclick="document.getElementById('src').click()"
+                >
+                  <svg
+                    class="w-6 h-6"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                      stroke-linejoin="round"
+                      stroke-linecap="round"
+                    ></path>
+                  </svg>
+                  <span class="text">Upload</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Product description section - maintaining the same visual structure -->
+            <div class="product-description">
+              <div class="name-category-details">
+                <!-- Make name editable -->
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Product Name"
+                  class="description-name edit-name editable-field"
+                  required
+                />
+
+                <!-- Category dropdown styled like a button -->
+                <div class="select-wrapper">
+                  <select
+                    name="category"
+                    id="category"
+                    class="description-category"
+                  >
+                    <% listedCategories.forEach((category) => { %>
+                    <option value="<%= category.category %>">
+                      <%= category.category %>
+                    </option>
+                    <% }) %>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Price field -->
+              <div class="price-field">
+                <span class="price-prefix">$</span>
+                <input
+                  type="number"
+                  name="price"
+                  placeholder="0.00"
+                  min="0.01"
+                  step="any"
+                  class="description-price editable-field"
+                  required
+                />
+              </div>
+
+              <!-- Quantity field -->
+              <div class="quantity-field">
+                <span class="quantity-prefix">Qty: </span>
+                <input
+                  type="number"
+                  name="quantity"
+                  placeholder="1"
+                  min="1"
+                  max="999"
+                  class="description-count editable-field"
+                  required
+                />
+              </div>
+
+              <!-- Description field -->
+              <textarea
+                name="description"
+                placeholder="Product description..."
+                class="description-description editable-field"
+                maxlength="300"
+              ></textarea>
+
+              <!-- Action buttons -->
+              <button type="submit" class="edit-submit-btn">
+                <span class="text-container">
+                  <span class="text">Add Product</span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
+
     <%- include('partials/footer') %>
+
+    <!-- Add script for image preview -->
+    <script>
+      function previewImage(input) {
+        if (input.files && input.files[0]) {
+          var reader = new FileReader();
+
+          reader.onload = function (e) {
+            document.getElementById("preview-image").src = e.target.result;
+          };
+
+          reader.readAsDataURL(input.files[0]);
+        }
+      }
+    </script>
   </body>
 </html>

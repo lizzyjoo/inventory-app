@@ -51,9 +51,20 @@ async function search(req, res) {
 }
 
 async function addProduct(req, res) {
-  const listedCategories = await db.getCategories();
+  console.log("addProduct function called!");
+  try {
+    // Fetch categories for the dropdown
+    const listedCategories = await db.getCategories();
 
-  res.render("newProduct", listedCategories);
+    // Render the newProduct template with categories
+    res.render("newProduct", {
+      title: "Add New Product",
+      listedCategories: listedCategories,
+    });
+  } catch (error) {
+    console.error("Error loading add product form:", error);
+    res.status(500).send("Error loading add product form");
+  }
 }
 
 async function deleteProduct(req, res) {
