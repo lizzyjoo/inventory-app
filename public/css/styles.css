@@ -6,8 +6,16 @@
   box-sizing: border-box;
 }
 
+html,
 body {
+  height: 100%;
   margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 .homepage {
   position: relative;
@@ -17,6 +25,7 @@ body {
   align-items: center;
   justify-content: center;
   background: #ffffff;
+  flex: 1;
 }
 
 /* Header styling */
@@ -63,6 +72,7 @@ a {
 .main-nav {
   display: flex;
   margin-right: auto;
+  cursor: pointer;
 }
 
 .main-nav a {
@@ -208,6 +218,7 @@ a {
   animation: fadeInButton 0.6s ease-out forwards;
   animation-delay: 0.9s; /* Slightly longer delay than the card */
   opacity: 0;
+  cursor: pointer;
 }
 
 .view-inventory a {
@@ -230,6 +241,7 @@ a {
   align-items: first baseline;
   gap: 40px;
   justify-content: center;
+  margin-bottom: 5em;
 }
 
 .believe-title {
@@ -275,4 +287,12 @@ a {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* footer */
+footer {
+  background-color: #426b1f;
+  color: #fff;
+  padding: 0.5rem;
+  text-align: center;
 }

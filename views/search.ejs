@@ -29,21 +29,21 @@
         <% if (products.length > 0) { %>
         <div class="product-grid">
           <% products.forEach(product => { %>
-          <div class="product-card">
-            <img
-              src="<%= product.src %>"
-              alt="<%= product.name %>"
-              width="100px"
-              height="auto"
-            />
-            <div class="product-info">
-              <p class="product-name"><%= product.name %></p>
-
-              <p class="price">$<%= product.price %></p>
-              <div class="product-count">Qty: <%= product.quantity %></div>
+          <a href="/products/<%= product.id %>" class="product-link">
+            <div class="product-card">
+              <img
+                src="<%= product.src %>"
+                alt="<%= product.name %>"
+                loading="lazy"
+              />
+              <div class="product-info">
+                <p class="product-name"><%= product.name %></p>
+                <p class="price">$<%= product.price %></p>
+                <div class="product-count">Qty: <%= product.quantity %></div>
+              </div>
+              <span class="corner-text"><%= product.category %></span>
             </div>
-            <span class="corner-text"><%= product.category %></span>
-          </div>
+          </a>
           <% }); %>
         </div>
         <% } else { %>
