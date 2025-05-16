@@ -55,7 +55,7 @@ async function checkDatabaseConnection() {
       !tablesCheck.rows[0].inventory_exist
     ) {
       console.warn(
-        "Some required tables don't exist. Run populatedb.js to set up the database."
+        "Some required tables don't exist. Visit /setup-database to set up the database."
       );
     } else {
       // Check if data exists
@@ -72,6 +72,79 @@ async function checkDatabaseConnection() {
     return false;
   }
 }
+
+// Add a setup-database route
+app.get("/setup-database", async (req, res) => {
+  try {
+    // Create tables if they don't exist
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS categories (
+        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY, 
+        category VARCHAR(50) UNIQUE, 
+        src TEXT DEFAULT '/images/default.svg'
+      )
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS inventory (
+        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY, 
+        name VARCHAR(50) UNIQUE, 
+        category_id INTEGER REFERENCES categories(id), 
+        quantity INTEGER, 
+        price DECIMAL(5, 2), 
+        src TEXT DEFAULT '/images/default.svg', 
+        description VARCHAR(200), 
+        isDefault BOOLEAN
+      )
+    `);
+
+    // Add categories (will ignore if they already exist due to UNIQUE constraint)
+    await pool.query(`
+      INSERT INTO categories (category, src) VALUES 
+      ('Uncategorized', '/images/default.jpg'), 
+      ('Bread', '/images/bread.jpg'), 
+      ('Pastries','/images/pastries.jpg'), 
+      ('Cakes', '/images/cakes.jpg'), 
+      ('Drinks', '/images/drinks.jpg')
+      ON CONFLICT (category) DO NOTHING;
+    `);
+
+    // Add some sample products (directly, no parameters)
+    await pool.query(`
+      INSERT INTO inventory (name, category_id, quantity, price, src, description, isdefault) VALUES 
+      ('Sourdough', 2, 20, 4.99, '/images/sourdough.jpg', 'Natural fermentation combines for sweet, nutty, and lightly acidic flavors', true),
+      ('Baguette', 2, 20, 3.99, '/images/baguette.jpg', 'Classic French bread with a crispy crust.', true),
+      ('Croissants', 3, 25, 3.99, '/images/croissants.jpg', 'Flaky, buttery French pastry.', true),
+      ('Espresso', 5, 30, 2.99, '/images/espresso.jpg', 'Strong shot of concentrated coffee.', true)
+      ON CONFLICT (name) DO NOTHING;
+    `);
+
+    // Add more products if needed
+    await pool.query(`
+      INSERT INTO inventory (name, category_id, quantity, price, src, description, isdefault) VALUES 
+      ('German Rye', 2, 15, 4.29, '/images/german-rye.jpg', 'Dense rye bread with a rich flavor.', true),
+      ('Focaccia', 2, 18, 4.49, '/images/focaccia.jpg', 'Olive oil-rich Italian flatbread.', true),
+      ('Challah', 2, 16, 5.49, '/images/challah.jpg', 'Soft braided bread, slightly sweet.', false),
+      ('Danish', 3, 20, 3.79, '/images/danish.jpg', 'Pastry with sweet or fruity filling.', false),
+      ('Éclairs', 3, 18, 3.99, '/images/eclair.jpg', 'Choux pastry filled with cream and chocolate.', true),
+      ('Coffee Cake', 4, 14, 5.29, '/images/coffee-cake.jpg', 'Crumbly cake perfect with coffee.', true),
+      ('Americano', 5, 25, 2.99, '/images/americano.jpg', 'Espresso diluted with water.', true),
+      ('Latte', 5, 30, 3.99, '/images/latte.jpg', 'Espresso with steamed milk.', true)
+      ON CONFLICT (name) DO NOTHING;
+    `);
+
+    // Check table counts
+    const categoriesCount = await pool.query("SELECT COUNT(*) FROM categories");
+    const productsCount = await pool.query("SELECT COUNT(*) FROM inventory");
+
+    res.send(
+      `Database setup complete. You have ${categoriesCount.rows[0].count} categories and ${productsCount.rows[0].count} products.`
+    );
+  } catch (error) {
+    console.error("Database setup error:", error);
+    res.status(500).send("Error setting up database: " + error.message);
+  }
+});
 
 // Just check the database connection, don't initialize
 checkDatabaseConnection().then((connected) => {
