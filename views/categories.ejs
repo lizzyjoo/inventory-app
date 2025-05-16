@@ -21,22 +21,27 @@
           <div class="header-menu">
             <p class="header-title"><%= title %></p>
             <div class="buttons">
-              <button class="header-btn">Add a Category</button>
+              <a href="/categories/new"
+                ><button class="header-btn">Add a Category</button></a
+              >
             </div>
           </div>
           <div class="divider"></div>
         </div>
         <div class="category-grid">
           <% listedCategories.forEach(category => { %>
-          <div class="category-card">
-            <img
-              src="<%= category.src %>"
-              alt="<%= category.category %>"
-              width="100px"
-              height="auto"
-            />
-            <div class="category-name-div"><%= category.category %></div>
-          </div>
+          <a href="/products?category=<%=category.category%>">
+            <div class="category-card">
+              <img
+                src="<%= category.src %>"
+                alt="<%= category.category %>"
+                width="100px"
+                height="auto"
+              />
+              <div class="category-name-div"><%= category.category %></div>
+            </div></a
+          >
+
           <% }); %>
         </div>
       </div>

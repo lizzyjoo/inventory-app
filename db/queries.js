@@ -1,19 +1,7 @@
 const pool = require("./pool");
 
-async function getAllProducts(query = null) {
-  try {
-    // if filter applied
-    if (query) {
-      return filterProducts(query);
-    }
-    const { rows } = await pool.query(
-      "SELECT inventory.*, categories.category, categories.src AS category_src FROM inventory JOIN categories ON category_id = categories.id;"
-    );
-    return rows;
-  } catch (err) {
-    console.error(err);
-    return [];
-  }
+async function getAllProducts() {
+  return getFilteredAndSortedProducts();
 }
 // get all categories
 async function getCategories() {
@@ -22,6 +10,44 @@ async function getCategories() {
   );
 
   return rows;
+}
+
+async function getFilteredAndSortedProducts(options = {}) {
+  try {
+    const { category = null, sortBy = "name", sortOrder = "ASC" } = options;
+
+    let query = `
+      SELECT inventory.*, categories.category 
+      FROM inventory 
+      JOIN categories ON inventory.category_id = categories.id
+    `;
+
+    const queryParams = [];
+    let paramIndex = 1;
+
+    // Add WHERE clause if category filter is provided
+    if (category) {
+      query += ` WHERE categories.category = $${paramIndex}`;
+      queryParams.push(category);
+      paramIndex++;
+    }
+
+    // Add ORDER BY clause based on sortBy parameter
+    if (sortBy === "price") {
+      query += ` ORDER BY inventory.price ${sortOrder}`;
+    } else if (sortBy === "name") {
+      query += ` ORDER BY inventory.name ${sortOrder}`;
+    }
+
+    const { rows } = await pool.query(query, queryParams);
+    return rows;
+  } catch (err) {
+    console.error("Database query error:", err);
+    return [];
+  }
+}
+async function getProductsByCategory(category) {
+  return getFilteredAndSortedProducts({ category });
 }
 
 // get category id by name
@@ -157,10 +183,75 @@ async function search(query) {
   return rows;
 }
 
+async function sortByPrice(order = "ASC", categoryFilter = null) {
+  try {
+    let query;
+    let params;
+
+    if (categoryFilter) {
+      query = `
+      SELECT inventory.*, categories.category
+      FROM inventory
+      JOIN categories ON inventory.category_id = categories.id
+      WHERE categories.category = $1
+      ORDER BY inventory.price ${order === "DESC" ? "DESC" : "ASC"}
+      `;
+      params = [categoryFilter];
+    } else {
+      // Sort all products
+      query = `
+        SELECT inventory.*, categories.category 
+        FROM inventory 
+        JOIN categories ON inventory.category_id = categories.id 
+        ORDER BY inventory.price ${order === "DESC" ? "DESC" : "ASC"}
+      `;
+    }
+    const { rows } = await pool.query(query, params);
+    return rows;
+  } catch (err) {
+    console.error("Error sorting products by price:", err);
+    return [];
+  }
+}
+
+async function sortByName(order = "ASC", categoryFilter = null) {
+  try {
+    let query;
+    let params = [];
+
+    if (categoryFilter) {
+      // If category filter is provided, include it in the query
+      query = `
+        SELECT inventory.*, categories.category 
+        FROM inventory 
+        JOIN categories ON inventory.category_id = categories.id 
+        WHERE categories.category = $1
+        ORDER BY inventory.name ${order === "DESC" ? "DESC" : "ASC"}
+      `;
+      params = [categoryFilter];
+    } else {
+      // Sort all products
+      query = `
+        SELECT inventory.*, categories.category 
+        FROM inventory 
+        JOIN categories ON inventory.category_id = categories.id 
+        ORDER BY inventory.name ${order === "DESC" ? "DESC" : "ASC"}
+      `;
+    }
+
+    const { rows } = await pool.query(query, params);
+    return rows;
+  } catch (err) {
+    console.error("Error sorting products by name:", err);
+    return [];
+  }
+}
+
 module.exports = {
   getAllProducts,
   getCategories,
   getCategoryIdByName,
+  getProductsByCategory,
   addCategory,
   addProductToDb,
   deleteProduct,
@@ -168,4 +259,6 @@ module.exports = {
   editProduct,
   filterById,
   search,
+  sortByPrice,
+  sortByName,
 };

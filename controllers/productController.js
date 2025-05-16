@@ -1,19 +1,60 @@
 db = require("../db/queries");
 
 async function getAllProducts(req, res) {
-  const products = await db.getAllProducts();
-  const categories = await db.getCategories();
-  console.log("Products from database:", products);
+  try {
+    const categoryFilter = req.query.category;
+    const sortBy = req.query.sortBy || ""; // Default empty string
+    const order = req.query.order || "ASC"; // Default to ascending order
 
-  res.render("products", {
-    title: "Products",
-    products,
-    listedCategories: categories,
-    selectedCategory: req.query.category,
-    sort: req.query.sort,
-  });
+    console.log("Request params:", { categoryFilter, sortBy, order });
+
+    // Get all categories for the dropdown
+    const categories = await db.getCategories();
+
+    let products = [];
+
+    // Determine which function to use based on parameters
+    if (sortBy === "price") {
+      // Check if function exists first
+      if (typeof db.sortByPrice === "function") {
+        products = await db.sortByPrice(order, categoryFilter);
+      } else {
+        products = await db.getAllProducts();
+        console.warn(
+          "sortByPrice function not defined, using getAllProducts instead"
+        );
+      }
+    } else if (sortBy === "name") {
+      // Check if function exists first
+      if (typeof db.sortByName === "function") {
+        products = await db.sortByName(order, categoryFilter);
+      } else {
+        products = await db.getAllProducts();
+        console.warn(
+          "sortByName function not defined, using getAllProducts instead"
+        );
+      }
+    } else if (categoryFilter) {
+      products = await db.getProductsByCategory(categoryFilter);
+    } else {
+      products = await db.getAllProducts();
+    }
+
+    console.log(`Found ${products.length} products`);
+
+    res.render("products", {
+      title: "Products",
+      products,
+      categories,
+      selectedCategory: categoryFilter || "",
+      sortBy: sortBy, // Make sure to pass sortBy
+      order: order, // Make sure to pass order
+    });
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).send("Error loading products");
+  }
 }
-
 // product specific page
 async function showProduct(req, res) {
   try {

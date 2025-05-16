@@ -46,9 +46,46 @@
             </div>
 
             <div class="buttons">
-              <button class="header-btn">Default</button>
-              <button class="header-btn">A-Z</button>
-              <button class="header-btn">Categories</button>
+              <div class="sort-btn">
+                <form action="/products" method="GET">
+                  <!-- Preserve category filter if present -->
+                  <% if (selectedCategory) { %>
+                    <input type="hidden" name="category" value="<%= selectedCategory %>">
+                  <% } %>
+                  <input type="hidden" name="sortBy" value="price">
+                  <input type="hidden" name="order" value="<%= order === 'DESC' && sortBy === 'price' ? 'ASC' : 'DESC' %>">
+                  <button type="submit" class="header-btn">
+                    Price <%= sortBy === 'price' ? (order === 'ASC' ? '↑' : '↓') : '' %>
+                  </button>
+                </form>
+              </div>
+              
+              <div class="sort-btn">
+                <form action="/products" method="GET">
+                  <!-- Preserve category filter if present -->
+                  <% if (selectedCategory) { %>
+                    <input type="hidden" name="category" value="<%= selectedCategory %>">
+                  <% } %>
+                  <input type="hidden" name="sortBy" value="name">
+                  <input type="hidden" name="order" value="<%= order === 'DESC' && sortBy === 'name' ? 'ASC' : 'DESC' %>">
+                  <button type="submit" class="header-btn">
+                    A-Z <%= sortBy === 'name' ? (order === 'ASC' ? '↑' : '↓') : '' %>
+                  </button>
+                </form>
+              </div>
+              <div class="category-filter">
+                <form id="category-form" action="/products" method="GET">
+                  <select name="category" id="category-select" onchange="this.form.submit()">
+                    <option value="">All Categories</option>
+                    <% categories.forEach(category => { %>
+                      <option value="<%= category.category %>" 
+                        <%= selectedCategory === category.category ? 'selected' : '' %>>
+                        <%= category.category %>
+                      </option>
+                    <% }); %>
+                  </select>
+                </form>
+              </div>
             </div>
           </div>
           <div class="divider"></div>
