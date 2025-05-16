@@ -13,6 +13,10 @@ if (!process.env.DATABASE_URL) {
 // Setup DB connection
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false }
+      : false,
 });
 app.locals.pool = pool;
 
@@ -37,6 +41,11 @@ app.use("/categories", categoryRoutes);
 // 404 handler
 app.use((req, res) => {
   res.status(404).render("404");
+});
+
+app.use((err, req, res, next) => {
+  console.error("Application error:", err);
+  res.status(500).send("Something went wrong. Please try again later.");
 });
 
 // Start server

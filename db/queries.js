@@ -53,12 +53,18 @@ async function getProductsByCategory(category) {
 // get category id by name
 async function getCategoryIdByName(categoryName) {
   const { rows } = await pool.query(
-    `SELECT id FROM categories WHERE category = $1`, // just a placeholder
+    `SELECT id FROM categories WHERE category = $1`,
     [categoryName]
   );
+
+  // Check if a category was found
+  if (rows.length === 0 || !rows[0]) {
+    console.error(`Category not found: ${categoryName}`);
+    return null; // Return null instead of trying to access .id on undefined
+  }
+
   return rows[0].id;
 }
-
 async function addCategory(newCategory) {
   const result = await pool.query(
     "INSERT INTO categories (category, src) VALUES ($1, $2);",
@@ -70,7 +76,7 @@ async function addCategory(newCategory) {
 async function addProductToDb(newProduct) {
   const categoryID = await getCategoryIdByName(newProduct.category);
   if (!categoryID) {
-    throw new Error("invalid category");
+    throw new Error(`Invalid category: ${newProduct.category}`);
   }
 
   await pool.query(
@@ -130,6 +136,17 @@ async function editProduct({
   const updates = []; // collect field updates e.g. ["name = $1", "price = $2", "quantity = $3"]
   const values = []; // collect values
   let index = 1;
+  if (category) {
+    const categoryId = await getCategoryIdByName(category);
+    if (categoryId) {
+      // Check if categoryId exists
+      updates.push(`category_id = $${index++}`);
+      values.push(categoryId);
+    } else {
+      console.warn(`Category not found: ${category}, skipping category update`);
+      // Handle error or continue without updating category
+    }
+  }
 
   if (name) {
     updates.push(`name = $${index++}`);
