@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Inter&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/categories.css" />
+    <link rel="stylesheet" href="/css/products.css" />
+  </head>
+  <body>
+    <div class="homepage">
+      <!-- Include header partial -->
+      <%- include('partials/header') %>
+      <div class="container">
+        <div class="header-addBtn">
+          <div class="header-menu">
+            <p class="header-title"><%= title %></p>
+            <div class="buttons">
+              <a href="/categories/new"
+                ><button class="header-btn">Add a Category</button></a
+              >
+            </div>
+          </div>
+          <div class="divider"></div>
+        </div>
+        <div class="category-form-div">
+          <form class="category-form" action="/categories/new" method="post">
+            <label for="category">Category:</label>
+            <input type="text" name="category" required />
+
+            <button type="submit" class="header-btn">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <%- include('partials/footer') %>
+  </body>
+</html>

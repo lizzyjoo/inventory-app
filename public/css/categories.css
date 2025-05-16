@@ -3,23 +3,51 @@
 
 .category-grid {
   display: grid;
-  gap: 20px;
-  grid-template-columns: repeat(auto-fit, minmax(30px, 350px));
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(30px, 150px));
   padding: 0px 30px;
-  justify-content: center;
+  justify-content: left;
 }
 
 .category-card {
+  width: 130px;
+  height: 40px;
   display: flex;
-  /* flex-direction: column; */
-  justify-content: center;
   align-items: center;
-  overflow: hidden;
-  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
-  border: 2px solid #e6e6e6;
-  border-radius: 24px;
-  position: relative;
+  justify-content: center;
+  background-color: rgb(15, 15, 15);
+  border: none;
+  color: white;
+  font-weight: 600;
+  gap: 8px;
   cursor: pointer;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.103);
+  position: relative;
+  overflow: hidden;
+  transition-duration: 0.3s;
+}
+.category-card::before {
+  width: 130px;
+  height: 130px;
+  position: absolute;
+  content: "";
+  background-color: white;
+  border-radius: 50%;
+  left: -100%;
+  top: 0;
+  transition-duration: 0.3s;
+  mix-blend-mode: difference;
+}
+
+.category-card:hover::before {
+  transition-duration: 0.3s;
+  transform: translate(100%, -50%);
+  border-radius: 0;
+}
+
+.category-card:active {
+  transform: translate(5px, 5px);
+  transition-duration: 0.3s;
 }
 
 .category-card img {
@@ -37,4 +65,33 @@
   width: 100%;
   text-align: center;
   text-shadow: -6px 0px 3px rgba(0, 0, 0, 0.35);
+}
+
+.category-form-div {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.category-form {
+  display: flex;
+  width: 60%;
+  gap: 10px;
+  flex-direction: column;
+}
+
+.category-form label {
+  font-size: 22px;
+  font-family: "Inter var", ui-sans-serif, system-ui, -apple-system, system-ui,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-weight: 600;
+  line-height: 1.25rem;
+}
+.category-form input {
+  background-color: white;
+  padding: 0.5rem 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.26);
 }

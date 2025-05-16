@@ -31,15 +31,9 @@
         <div class="category-grid">
           <% listedCategories.forEach(category => { %>
           <a href="/products?category=<%=category.category%>">
-            <div class="category-card">
-              <img
-                src="<%= category.src %>"
-                alt="<%= category.category %>"
-                width="100px"
-                height="auto"
-              />
+            <button class="category-card">
               <div class="category-name-div"><%= category.category %></div>
-            </div></a
+            </button></a
           >
 
           <% }); %>
