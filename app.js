@@ -20,6 +20,59 @@ const pool = new Pool({
 });
 app.locals.pool = pool;
 
+// Add this after establishing the pool connection
+async function checkDatabaseSetup() {
+  try {
+    // Check if tables exist
+    const tablesExist = await pool.query(`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' AND table_name = 'categories'
+      ) AS categories_exist,
+      EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' AND table_name = 'inventory'
+      ) AS inventory_exist
+    `);
+
+    console.log("Database tables check:", tablesExist.rows[0]);
+
+    // If tables don't exist, we need to create them
+    if (
+      !tablesExist.rows[0].categories_exist ||
+      !tablesExist.rows[0].inventory_exist
+    ) {
+      console.log("Required tables missing - running database setup");
+      // This is where you would call your seed script
+      // You could either import your seed.js functions or run them directly here
+      return false;
+    }
+
+    // Check if any categories exist
+    const categoryCount = await pool.query("SELECT COUNT(*) FROM categories");
+    console.log(`Categories in database: ${categoryCount.rows[0].count}`);
+
+    if (categoryCount.rows[0].count == 0) {
+      console.log("No categories found - database may need seeding");
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Database setup check failed:", error);
+    return false;
+  }
+}
+
+// Call the check at startup
+checkDatabaseSetup().then((isSetup) => {
+  if (isSetup) {
+    console.log("Database is properly set up");
+  } else {
+    console.log("Database setup issue detected");
+    // You could trigger automatic seeding here
+  }
+});
 // Middleware
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
