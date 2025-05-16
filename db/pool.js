@@ -1,48 +1,37 @@
-// Update your pool.js file or wherever you create your database connection
+// db/pool.js
 const { Pool } = require("pg");
 require("dotenv").config();
 
-let poolConfig = {};
+// Log database connection info for debugging
+console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("DATABASE_URL exists:", !!process.env.DATABASE_URL);
 
-if (process.env.DATABASE_URL) {
-  // For Railway/production environment
-  console.log("Using DATABASE_URL for PostgreSQL connection");
-  poolConfig = {
-    connectionString: process.env.DATABASE_URL,
+// Configuration for database connection
+const config = {
+  connectionString: process.env.DATABASE_URL,
+  // Enable SSL in production (Railway)
+  ...(process.env.NODE_ENV === "production" && {
     ssl: {
-      rejectUnauthorized: false, // Required for Railway PostgreSQL
+      rejectUnauthorized: false,
     },
-  };
-} else {
-  // For local development
-  console.log("Using local PostgreSQL connection");
-  poolConfig = {
-    host: process.env.DB_HOST || "localhost",
-    port: process.env.DB_PORT || 5432,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-  };
-}
+  }),
+};
 
-console.log("Database connection config:", {
-  ...poolConfig,
-  // Don't log the full connection string or password
-  connectionString: poolConfig.connectionString
-    ? "[CONNECTION STRING SET]"
-    : undefined,
-  password: poolConfig.password ? "[PASSWORD SET]" : undefined,
+console.log("PostgreSQL connection config:", {
+  ...config,
+  connectionString: config.connectionString ? "[HIDDEN]" : undefined,
 });
 
-const pool = new Pool(poolConfig);
+// Create the pool
+const pool = new Pool(config);
 
-// Test connection on startup
-pool.query("SELECT NOW()", (err, res) => {
-  if (err) {
-    console.error("Database connection test failed:", err);
-  } else {
-    console.log("Database connected successfully:", res.rows[0].now);
-  }
+// Log successful creation
+console.log("Database pool created successfully");
+
+// Add error handler
+pool.on("error", (err) => {
+  console.error("Unexpected error on idle client", err);
+  // Don't exit process as that would crash the application
 });
 
 module.exports = pool;
