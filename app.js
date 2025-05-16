@@ -29,18 +29,59 @@ app.use(express.json()); // parse incoming request bodies
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// Initialize database and then set up routes ONCE
-const initializeDatabase = require("./db-init");
+// Basic database check - doesn't try to initialize, just verifies connection
+async function checkDatabaseConnection() {
+  try {
+    console.log("Testing database connection...");
+    const result = await pool.query("SELECT NOW() as now");
+    console.log("Database connection successful:", result.rows[0].now);
 
-// Before setting up routes and starting the server
-initializeDatabase().then((success) => {
-  if (success) {
-    console.log("Database initialized successfully");
-  } else {
-    console.warn("Database initialization had issues");
+    // Check if tables exist
+    const tablesCheck = await pool.query(`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' AND table_name = 'categories'
+      ) as categories_exist,
+      EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' AND table_name = 'inventory'
+      ) as inventory_exist
+    `);
+
+    console.log("Tables exist:", tablesCheck.rows[0]);
+
+    if (
+      !tablesCheck.rows[0].categories_exist ||
+      !tablesCheck.rows[0].inventory_exist
+    ) {
+      console.warn(
+        "Some required tables don't exist. Run populatedb.js to set up the database."
+      );
+    } else {
+      // Check if data exists
+      const categoryCount = await pool.query("SELECT COUNT(*) FROM categories");
+      const productCount = await pool.query("SELECT COUNT(*) FROM inventory");
+      console.log(
+        `Database has ${categoryCount.rows[0].count} categories and ${productCount.rows[0].count} products`
+      );
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Database check failed:", error);
+    return false;
+  }
+}
+
+// Just check the database connection, don't initialize
+checkDatabaseConnection().then((connected) => {
+  if (!connected) {
+    console.warn(
+      "Database connection issues detected - app may not function correctly"
+    );
   }
 
-  // Set up routes ONLY ONCE
+  // Set up routes ONLY ONCE - regardless of database status
   const indexRoutes = require("./routers/index");
   const productRoutes = require("./routers/products");
   const categoryRoutes = require("./routers/categories");

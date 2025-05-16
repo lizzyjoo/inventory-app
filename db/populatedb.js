@@ -1,7 +1,10 @@
 const { Pool } = require("pg");
 require("dotenv").config();
 
-const dropTables = `DROP TABLE IF EXISTS inventory, categories;`;
+const dropTables =
+  process.env.NODE_ENV === "development"
+    ? `DROP TABLE IF EXISTS inventory, categories;`
+    : ""; // Don't drop tables in production
 
 const createCategoriesTable = `CREATE TABLE IF NOT EXISTS categories (
   id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY, 
@@ -91,9 +94,13 @@ async function main() {
     // Connect and run setup
     console.log("Connected to database.");
 
-    // Drop tables
-    await pool.query(dropTables);
-    console.log("Tables dropped.");
+    // Only drop tables if not in production
+    if (process.env.NODE_ENV !== "production") {
+      await pool.query(dropTables);
+      console.log("Tables dropped.");
+    } else {
+      console.log("Skipping table drop in production environment.");
+    }
 
     // Create tables
     await pool.query(createCategoriesTable);
