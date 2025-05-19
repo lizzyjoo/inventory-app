@@ -130,23 +130,13 @@ async function editProduct({
   quantity,
   price,
   category,
+  brand, // This field might be causing the duplicate category_id update
   src,
   description,
 }) {
-  const updates = []; // collect field updates e.g. ["name = $1", "price = $2", "quantity = $3"]
+  const updates = []; // collect field updates
   const values = []; // collect values
   let index = 1;
-  if (category) {
-    const categoryId = await getCategoryIdByName(category);
-    if (categoryId) {
-      // Check if categoryId exists
-      updates.push(`category_id = $${index++}`);
-      values.push(categoryId);
-    } else {
-      console.warn(`Category not found: ${category}, skipping category update`);
-      // Handle error or continue without updating category
-    }
-  }
 
   if (name) {
     updates.push(`name = $${index++}`);
@@ -157,25 +147,35 @@ async function editProduct({
     updates.push(`quantity = $${index++}`);
     values.push(quantity);
   }
+
   if (price) {
     updates.push(`price = $${index++}`);
     values.push(price);
   }
 
+  // Only process category field, ignore brand field for category_id
   if (category) {
-    const categoryId = await getCategoryIdByName(category);
-    if (categoryId) {
-      updates.push(`category_id = $${index++}`);
-      values.push(categoryId);
-    } else {
-      throw new Error("Invalid category.");
+    try {
+      const categoryId = await getCategoryIdByName(category);
+      if (categoryId) {
+        updates.push(`category_id = $${index++}`);
+        values.push(categoryId);
+      } else {
+        console.warn(`Invalid category: ${category}`);
+      }
+    } catch (error) {
+      console.error(`Error processing category: ${error.message}`);
     }
   }
+
+  // Don't process brand field for category_id
+  // Remove or comment out any code that tries to update category_id based on brand
 
   if (src) {
     updates.push(`src = $${index++}`);
     values.push(src);
   }
+
   if (description) {
     updates.push(`description = $${index++}`);
     values.push(description);
@@ -186,6 +186,8 @@ async function editProduct({
       ", "
     )} WHERE id = $${index}`;
     values.push(id);
+    console.log("Update query:", query);
+    console.log("Update values:", values);
     await pool.query(query, values);
   }
 }
